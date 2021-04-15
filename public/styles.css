@@ -1,0 +1,26 @@
+/*@media query check for screen size and if greater than 600 pixel, then only apply the style*/
+@media (min-width:600px) {
+    .rootcard{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .pcard {
+        max-width: 20%;
+        margin: 20px;
+    }
+}
+
+.authcard {
+    margin: 10px auto !important;
+    max-width: 400px  !important;
+    padding: 10px;
+}
+
+input:focus{
+    border-bottom: 1px #2962ff blue accent-4 !important;
+    box-shadow: 0 1px #2962ff blue accent-4 !important;
+}
+
+
