@@ -1,6 +1,7 @@
 import {useState} from'react';
 import Link from 'next/link';
 import { useRouter } from "next/router";
+import baseUrl from '../helpers/baseUrl';
 
 const SignUp = ()=> {
     const router = useRouter();
@@ -12,7 +13,7 @@ const SignUp = ()=> {
         event.preventDefault();
         console.log('userName: ' + username + ' email' + email + ' password: ' + password);
         
-        const res = await fetch(`http://localhost:3000/api/signup`, {
+        const res = await fetch(`${baseUrl}/api/signup`, {
             method:"POST",
             headers:{
                 'Content-Type':'application/json'

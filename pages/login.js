@@ -2,6 +2,7 @@ import {useState} from'react';
 import Link from 'next/link';
 import cookie from 'js-cookie';
 import {useRouter} from 'next/router'
+import baseUrl from '../helpers/baseUrl';
 
 const Login = ()=> {
     const router = useRouter();
@@ -12,7 +13,7 @@ const Login = ()=> {
         event.preventDefault();
         console.log(' email' + email + ' password: ' + password);
         
-        const res = await fetch(`http://localhost:3000/api/login`, {
+        const res = await fetch(`${baseUrl}/api/login`, {
             method:"POST",
             headers:{
                 'Content-Type':'application/json'
@@ -26,7 +27,6 @@ const Login = ()=> {
         if (res2.error) {
             M.toast({html: res2.error, classes:"red"})
         } else {
-            M.toast({html: "User created successfully", classes:"green"})
             cookie.set('token', res2.token);
             cookie.set('user', res2.user);
             router.push('/account');

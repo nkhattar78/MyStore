@@ -4,6 +4,7 @@ import {useRouter} from 'next/router'
 import Link from 'next/link'
 import {useState} from 'react'
 import StripeCheckout from 'react-stripe-checkout';
+import baseUrl from '../helpers/baseUrl';
 
 const Cart = ({error, products})=> {
     const router = useRouter();
@@ -40,7 +41,7 @@ const Cart = ({error, products})=> {
 
     const handleRemoveItemsFromCart= async (pid)=>{
         console.log('handled remove from cart. Token: ');
-        const res = await fetch(`http://localhost:3000/api/cart`, {
+        const res = await fetch(`${baseUrl}/api/cart`, {
             method:"DELETE",
             headers:{
                 "Content-Type":"application/json",
@@ -79,7 +80,7 @@ const Cart = ({error, products})=> {
     const handleCheckout = async(paymentInfo) =>{
         console.log("handleCheckout");
         console.log(paymentInfo);
-        const res = await fetch(`http://localhost:3000/api/payment`, {
+        const res = await fetch(`${baseUrl}/api/payment`, {
             method:"POST",
             headers:{
                 "Content-Type":"application/json",
@@ -129,7 +130,7 @@ export async function getServerSideProps(context) {
             props:{products:[]}
         }
     }
-    const res = await fetch(`http://localhost:3000/api/cart`, {
+    const res = await fetch(`${baseUrl}/api/cart`, {
         headers:{
             "Authorization":token
         }

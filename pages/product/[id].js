@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import {useState,useRef, useEffect} from 'react'
 import {parseCookies} from 'nookies';
 import cookie from 'js-cookie';
+import baseUrl from '../../helpers/baseUrl';
 
 //This is an example of DYNAMIC PAGE where calling the api to get the page details and then displaying product details according to that
 const Product = ({product}) => {
@@ -25,7 +26,7 @@ const Product = ({product}) => {
     }
 
     const deleteProduct = async()=> {
-        const res = await fetch(`http://localhost:3000/api/product/${product._id}`, {
+        const res = await fetch(`${baseUrl}/api/product/${product._id}`, {
             method:"DELETE"
         });
         const res2 = await res.json();
@@ -56,7 +57,7 @@ const Product = ({product}) => {
 
     const handleAddToCart = async() => {
         console.log('handled add t cart. Token: ' + cookies.token);
-        const res = await fetch(`http://localhost:3000/api/cart`, {
+        const res = await fetch(`${baseUrl}/api/cart`, {
             method:"PUT",
             headers:{
                 "Content-Type":"application/json",
@@ -129,39 +130,38 @@ const Product = ({product}) => {
 
 //This is an example of using getServerSideProps API. 
 //For every page request getServerSideProps will make a server side call to fetch the product details.
-// export async function getServerSideProps({params:{id}}){
-//     console.log("id: " + id);
-//     //const res = await fetch(`http://localhost:3000/api/product/${id}`);
-//     const res = await fetch(`http://localhost:3000/api/product/${id}`, {
-//             method:"GET"
-//         });
-//     const data = await res.json();
-//     return {
-//         props:{product:data}
-//     }
-// }
-
-//This is an example of using getStaticProps API to achieve the same we did above using the  getServerSideProps
-//As getStaticProps will prepare the pages at build time, so need to pass all the IDs for which product pages need to be built at build time
-// For doing that will use getStaticPaths for getting the IDs which will pass to the getStaticProps
-export async function getStaticProps({params:{id}}){
-    console.log("id received from page: " + id);    
-    const res = await fetch(`http://localhost:3000/api/product/${id}`);
+export async function getServerSideProps({params:{id}}){
+    console.log("id: " + id);    
+    const res = await fetch(`${baseUrl}/api/product/${id}`, {
+            method:"GET"
+        });
     const data = await res.json();
     return {
         props:{product:data}
     }
 }
 
-//Nowe there are 2 options in case of building static pages, etiher all the IDs will be added here or some IDs be added here. 
-//In case only some ID are added here, then based on fallback value it will show error or make the server call at runtime to getStaicProps to get the product details.
-export async function getStaticPaths() {
-    return{
-        paths:[
-            {params:{id:"60704679243be8a4851e5691"}},
-            {params:{id:"60705848972f05e2288e5cbc"}}
-        ],
-        fallback:true
-    }
-}
+//This is an example of using getStaticProps API to achieve the same we did above using the  getServerSideProps
+//As getStaticProps will prepare the pages at build time, so need to pass all the IDs for which product pages need to be built at build time
+// For doing that will use getStaticPaths for getting the IDs which will pass to the getStaticProps
+// export async function getStaticProps({params:{id}}){
+//     console.log("id received from page: " + id);    
+//     const res = await fetch(`${baseUrl}/api/product/${id}`);
+//     const data = await res.json();
+//     return {
+//         props:{product:data}
+//     }
+// }
+
+// //Nowe there are 2 options in case of building static pages, etiher all the IDs will be added here or some IDs be added here. 
+// //In case only some ID are added here, then based on fallback value it will show error or make the server call at runtime to getStaicProps to get the product details.
+// export async function getStaticPaths() {
+//     return{
+//         paths:[
+//             {params:{id:"60704679243be8a4851e5691"}},
+//             {params:{id:"60705848972f05e2288e5cbc"}}
+//         ],
+//         fallback:true
+//     }
+// }
 export default Product;

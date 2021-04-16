@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import {parseCookies} from 'nookies'
+import baseUrl from '../helpers/baseUrl'
 
 function UserRole(){
     const [users,setUsers] = useState([]);
@@ -10,7 +11,7 @@ function UserRole(){
 
     const fetchUsers = async ()=>{
         console.log('Going to fetch users from DB');
-        const res = await fetch(`http://localhost:3000/api/users`, {
+        const res = await fetch(`${baseUrl}/api/users`, {
             headers:{
                 "Authorization":token
             }
@@ -20,7 +21,7 @@ function UserRole(){
         setUsers(res2);
     }
     const handleRoleChange = async (_id, role) =>{
-        const res = await fetch(`http://localhost:3000/api/users`, {
+        const res = await fetch(`${baseUrl}/api/users`, {
             method:"PUT",
             headers:{
                 "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 import {useState} from'react';
 import {parseCookies} from 'nookies'
+import baseUrl from '../helpers/baseUrl';
 import Link from 'next/link';
 
 const Create = ()=> {
@@ -14,7 +15,7 @@ const Create = ()=> {
         //Upload image on cloudinary and get the url
         const imageURL = await imageUpload();
         console.log('imageURL received from cloudinary: ' + imageURL);
-        const res = await fetch(`http://localhost:3000/api/products`, {
+        const res = await fetch(`${baseUrl}/api/products`, {
             method:"POST",
             headers:{
                 'Content-Type':'application/json'

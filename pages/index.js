@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import baseUrl from '../helpers/baseUrl';
+
 const Home = ({products})=> {
   console.log(products);
 
@@ -39,8 +41,9 @@ const Home = ({products})=> {
 //   }
 // }
 
-export async function getStaticProps() {
-  const res = await fetch('http://localhost:3000/api/products');
+export async function getServerSideProps() {
+  console.log('Products API url:' + `${baseUrl}/api/products`);
+  const res = await fetch(`${baseUrl}/api/products`);
   const data = await res.json();
   console.log("Response received from server");
   console.log(data);

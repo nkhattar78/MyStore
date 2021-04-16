@@ -1,6 +1,7 @@
 import {parseCookies} from 'nookies'
 import { useEffect, useRef } from 'react';
 import UserRole from './UserRole';
+import baseUrl from '../helpers/baseUrl';
 
 const Account = ({orders})=> {
     const cookie = parseCookies()
@@ -75,7 +76,7 @@ export async function getServerSideProps(context) {
         res.writeHead(302, {Location:"/login"});
         res.end();
     }
-    const res = await fetch(`http://localhost:3000/api/orders`, {
+    const res = await fetch(`${baseUrl}/api/orders`, {
         headers:{
             "Authorization":token
         }
