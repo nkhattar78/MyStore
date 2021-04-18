@@ -13,7 +13,7 @@ const Login = ()=> {
         event.preventDefault();
         console.log(' email' + email + ' password: ' + password);
         
-        const res = await fetch(`https //cors-anywhere.herokuapp.com/${baseUrl}/api/login`, {
+        const res = await fetch(`${baseUrl}/api/login`, {
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
