@@ -24,14 +24,13 @@ export default async (req, res) => {
     }
 }
 
-const getUserCart = AuthenticateUser(async(req,res)=> {           
+const getUserCart = AuthenticateUser(async(req,res)=> {
         try {
             //Here populate function will populate the reference object and will return the populated arrar in the response
             const cart = await Cart.findOne({user:req.userId})
                         .populate("products.product")
-            res.status(200).json(cart.products);
-            console.log('jwtResult' + JSON.stringify(jwtResult));
             console.log(cart.products);
+            res.status(200).json(cart.products);
         } catch (err) {
             return res.status(401).json({error:"Exception while retieving the products saved in users cart"})
         }
