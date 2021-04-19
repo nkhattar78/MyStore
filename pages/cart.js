@@ -5,11 +5,17 @@ import Link from 'next/link'
 import {useState} from 'react'
 import StripeCheckout from 'react-stripe-checkout';
 import baseUrl from '../helpers/baseUrl';
+import timeoutFn from '../helpers/utils';
+import Spinner from '../components/Spinner'
 
 const Cart = ({error, products})=> {
     const router = useRouter();
     const {token} = parseCookies();
     const [cartProducts, setCartProducts] = useState(products)
+    const [removeCartInProgress, setRemoveCartInProgress] = useState(false);
+    const [checkoutInProgress, setCheckoutInProgress] = useState(false);
+
+
     let price = 0;
     if (!token) {
         return (
@@ -41,6 +47,7 @@ const Cart = ({error, products})=> {
 
     const handleRemoveItemsFromCart= async (pid)=>{
         console.log('handled remove from cart. Token: ');
+        setRemoveCartInProgress(true);
         const res = await fetch(`${baseUrl}/api/cart`, {
             method:"DELETE",
             headers:{
@@ -53,6 +60,8 @@ const Cart = ({error, products})=> {
         });
 
         const res2 = await res.json();
+        timeoutFn(2000);
+        setRemoveCartInProgress(false);
         setCartProducts(res2);
     }
 
@@ -68,7 +77,10 @@ const Cart = ({error, products})=> {
                             <div style={{marginLeft:"20px"}}>
                                 <h6>{item.product.name}</h6>
                                 <h6>{item.quantity} * {item.product.price}</h6>
-                                <button className="btn red" onClick={()=>{handleRemoveItemsFromCart(item.product._id)}}>remove</button>
+                                <button className="btn red" onClick={()=>{handleRemoveItemsFromCart(item.product._id)}} disabled = {removeCartInProgress || checkoutInProgress}>
+                                    {removeCartInProgress && <span>removing items from cart</span>}
+                                    {!removeCartInProgress && <span>remove</span>}
+                                </button>
                             </div>
                         </div>
                     )
@@ -79,6 +91,7 @@ const Cart = ({error, products})=> {
 
     const handleCheckout = async(paymentInfo) =>{
         console.log("handleCheckout");
+        setCheckoutInProgress(true);
         console.log(paymentInfo);
         const res = await fetch(`${baseUrl}/api/payment`, {
             method:"POST",
@@ -90,28 +103,34 @@ const Cart = ({error, products})=> {
         });
 
         const res2 = await res.json();
+        setCheckoutInProgress(false);
         M.toast({html:res2.message, classes:"green"});
         router.push('/');
         
     }
     const Checkout = ()=>{
         return(
-            <div className = "container" style ={{display:'flex', justifyContent:"space-between"}}>
-                <h5>Total Rs. {price}</h5>
-                {products.length >0 && 
-                <StripeCheckout
-                    name = "My Store"
-                    amount = {price * 100}
-                    image = {products.length>0?products[0].product.mediaUrl : ""}
-                    currency = "INR"
-                    shippingAddress = {true}
-                    billingAddress = {true}
-                    zipCode = {true}
-                    stripeKey = "pk_test_51Ig8qySF1Tlbkvv1UjqWxG8J4lMfg30KH5y3vuv27M6MuI2hwBIiyUE7nF0IhXtBFIehEHkMEUNhWjpPuMPZnK7h00pSoiI8Gn"
-                    token = {(paymentInfo) => {handleCheckout(paymentInfo)}}>
-                        <button className = "btn blue">Checkout</button>
-                </StripeCheckout>}
-            </div>
+            <>
+                <div className="center-align">
+                    {checkoutInProgress && <Spinner/>}
+                </div> 
+                <div className = "container" style ={{display:'flex', justifyContent:"space-between"}}>
+                    <h5>Total Rs. {price}</h5>
+                    {products.length >0 && 
+                    <StripeCheckout
+                        name = "My Store"
+                        amount = {price * 100}
+                        image = {products.length>0?products[0].product.mediaUrl : ""}
+                        currency = "INR"
+                        shippingAddress = {true}
+                        billingAddress = {true}
+                        zipCode = {true}
+                        stripeKey = "pk_test_51Ig8qySF1Tlbkvv1UjqWxG8J4lMfg30KH5y3vuv27M6MuI2hwBIiyUE7nF0IhXtBFIehEHkMEUNhWjpPuMPZnK7h00pSoiI8Gn"
+                        token = {(paymentInfo) => {handleCheckout(paymentInfo)}}>
+                            <button className = "btn blue" disabled={checkoutInProgress}>Checkout</button>
+                    </StripeCheckout>}
+                </div>
+            </>
         )
     }
 

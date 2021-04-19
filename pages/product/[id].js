@@ -77,6 +77,7 @@ const Product = ({product}) => {
             cookie.remove("token");
             router.push('/login');
         } else {
+            router.push('/');
             M.toast({html:res2.message, classes:"green"})
         }
         
