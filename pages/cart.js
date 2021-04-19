@@ -14,6 +14,7 @@ const Cart = ({error, products})=> {
     const [cartProducts, setCartProducts] = useState(products)
     const [removeCartInProgress, setRemoveCartInProgress] = useState(false);
     const [checkoutInProgress, setCheckoutInProgress] = useState(false);
+    const [isProductsCountZero, setIsProductsCountZero] = useState(products.length>0 ? false : true);
 
 
     let price = 0;
@@ -29,14 +30,6 @@ const Cart = ({error, products})=> {
             </div>
         )
     }
-    if (products.length === 0) {
-        return (
-            <div className="container" style={{alignItems:'center'}}>
-                <h5>Your cart is empty</h5>
-                <button className="btn green" onClick= {()=>{router.push("/")}}>Explore Products</button>
-            </div>
-        )
-    }
 
     if (error) {
         M.toast({html:error, classes:"red"})
@@ -46,7 +39,7 @@ const Cart = ({error, products})=> {
     }
 
     const handleRemoveItemsFromCart= async (pid)=>{
-        console.log('handled remove from cart. Token: ');
+        console.log('handled remove from cart.');
         setRemoveCartInProgress(true);
         const res = await fetch(`${baseUrl}/api/cart`, {
             method:"DELETE",
@@ -63,6 +56,13 @@ const Cart = ({error, products})=> {
         timeoutFn(2000);
         setRemoveCartInProgress(false);
         setCartProducts(res2);
+        console.log('products count: ' + res2.length);
+        console.log(res2);
+        console.log(cartProducts);
+        if (res2.length === 0) {
+            console.log('setting isProductsCountZero flag as true')
+            setIsProductsCountZero(true);
+        }
     }
 
     const CartItems=() => {
@@ -134,10 +134,24 @@ const Cart = ({error, products})=> {
         )
     }
 
+    const EmptyCart = () => {
+            return (
+                <div className="container" style={{alignItems:'center'}}>
+                    <h5>Your cart is empty</h5>
+                    <button className="btn green" onClick= {()=>{router.push("/")}}>Explore Products</button>
+                </div>
+            )
+    }
+
     return(
-        <div className="container">
+        <div className="container">            
+        {isProductsCountZero && <EmptyCart/>}
+        {!isProductsCountZero &&
+        <>
             <CartItems/>
             <Checkout/>
+        </> 
+        }
         </div>
     )
 }
